@@ -22,10 +22,10 @@
     <div class="hero-body">
       <div class="container">
         <h1 class="title">
-          Visualization Assignment
+          Homework Assignment #1
         </h1>
         <h2 class="subtitle">
-          Full Name
+          Sameer Isaq
         </h2>
       </div>
     </div>
@@ -83,23 +83,137 @@
       <svg width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
       </svg>
 
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script>
+
+      var colorColumn = "holiday";
+      var colorScale = d3.schemeCategory10;
+      // set the dimensions and margins of the graph
+      var margin = {top: 20, right: 20, bottom: 30, left: 40},
+          width = 960 - margin.left - margin.right,
+          height = 500 - margin.top - margin.bottom;
+          padding = -55;
+
+      // set the ranges
+      var x = d3.scaleBand()
+                .range([0, width])
+                .padding(0.5);
+      var y = d3.scaleLinear()
+                .range([height, 0]);
+
+      // append the svg object to the body of the page
+      // append a 'group' element to 'svg'
+      // moves the 'group' element to the top left margin
+      let svg = d3.select("body").select("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+          .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+      // get the data
+      d3.csv("data/holiday_data.csv", function(error, data) {
+        if (error) throw error;
+
+        // format the data
+        data.forEach(function(d) {
+          d.number = +d.number;
+        });
+
+        // Scale the range of the data in the domains
+        x.domain(data.map(function(d) { return d.holiday; }));
+        y.domain([0, d3.max(data, function(d) { return d.number; })]);
+
+        // append the rectangles for the bar chart
+        svg.selectAll(".bar")
+            .data(data)
+          .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.holiday); })
+            .attr("width", x.bandwidth())
+            .attr("y", function(d) { return y(d.number); })
+            .attr("height", function(d) { return height - y(d.number); })
+            .attr("fill", d => colorScale[d.holiday]);
+
+
+        // add the x Axis
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        // add the y Axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        svg.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (padding/2) + "," + (height/2) + ")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+            .text("Number of Records");
+
+        svg.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width/2) +","+(height - 450)+")")  // centre above axis
+            .text("Day of Incident");
+
+      });
+
+    </script>
+
       <h3>Interpretation</h3>
 
       <p>
         If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+
+        <br>
+        <br>
+
+        There isn't much interaction to be had with the visualization but it is simply a bar chart to represent the recorded crime on the major holidays within the month of December.
       </p>
 
       <h3>Discussion</h3>
 
       <p>
         If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+
+        <br>
+        <br>
+
+        The primary motivation behind this design was to see which holiday had the most criminal activity. In the visualizations, for holidays such as Christmas and New Years, the data reflected is actually a summary of crime records on their eve as well as the actual day.
+        <br>As we can see, New Years is the most active holiday.
+        <br>
+        <br>A real challenge I encountered with this assignment is getting explanations. I'm just entering the world of datavis and there are plenty of examples on how something is created, but not many break downs that explain function calls and/or syntax. Having to put it
+        together was very difficult.
       </p>
 
       <h3>Credit</h3>
 
       <p>
         If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+
+        <br>
+        <br>
+        <a href="http://bl.ocks.org/phoebebright/3061203">Resource 1</a>
+        This resource was used to label the x & y axis appropriately. Towards the bottom of the example code the user shows how to
+        label axis.
+
+        <br>
+        <br>
+        <a href="https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4">Resource 2</a>
+        This resource was used to model my entire graph off of. It is essentially the skeleton for which everything is made.
+
       </p>
+
+      <h3>Prototypes</h3>
+      <p>
+        These are the three Tableau visualizations that I attempted to recreate using D3:
+        <br><br>1.) A chart representing the popularity of crimes in December:
+        <br><img src="images/prototype1.png" style="width:500px;height:500px;">
+        <br><br>2.) A bar graph representing the most crime-ridden holiday in December:
+        <br><img src="images/prototype2.png" style="width:500px;height:500px;">
+        <br><br>3.) A bar graph indicating that, on holidays, crime rates are not abnormal:
+        <br><img src="images/prototype3.png" style="width:500px;height:500px;">
+      </p>
+
     </div>
   </section>
 
@@ -135,7 +249,10 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              There are 3 visualizations from Tableau, there are 2 different encodings for the data, 2 different perspectives,
+              colors for data, labels, and a caption.
+
+              This accounts for every requirement outlined on the homework to achieve a D.
             </td>
           </tr>
 
@@ -150,7 +267,7 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              I believe I accomplished a C level worth of work for this first assignment. I used the same visualization technique and encoding as my first prototype, which was required, and I included everything that could be found in the prototype, with the exception of color.
             </td>
           </tr>
 
@@ -165,7 +282,7 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              Not implemented.
             </td>
           </tr>
 
@@ -181,7 +298,7 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              Not implemented.
             </td>
           </tr>
         <tbody>
